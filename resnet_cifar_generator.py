@@ -15,10 +15,10 @@ def conv_bn_scale_relu(bottom, kernel_size=3, num_out=64, stride=1, pad=0, param
     conv = L.Convolution(bottom, kernel_size=kernel_size, stride=stride, num_output=num_out,
                          pad=pad, param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)], 
                          weight_filler=weight_filler, bias_filler=bias_filler)
-    bn_train = L.BatchNorm(conv, param=[dict(lr_mult=0), dict(lr_mult=0), dict(lr_mult=0)], 
+    bn_train = L.BatchNorm(conv, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0)], 
                      use_global_stats=False, in_place=True, include=dict(phase=0))
-    bn_test = L.BatchNorm(conv, param=[dict(lr_mult=0), dict(lr_mult=0), dict(lr_mult=0)], 
-                     use_global_stats=True, in_place=True, include=dict(phase=1))
+    bn_test = L.BatchNorm(conv, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0)], 
+                     use_global_stats=False, in_place=True, include=dict(phase=1))
     scale = L.Scale(conv, scale_param=dict(bias_term=True), in_place=True)
     relu = L.ReLU(conv, in_place=True)
     
@@ -30,9 +30,9 @@ def conv_bn_scale(bottom, kernel_size=3, num_out=64, stride=1, pad=0, params=con
     conv = L.Convolution(bottom, kernel_size=kernel_size, stride=stride, num_output=num_out,
                          pad=pad, param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)], 
                          weight_filler=weight_filler, bias_filler=bias_filler)
-    bn_train = L.BatchNorm(conv, param=[dict(lr_mult=0), dict(lr_mult=0), dict(lr_mult=0)], 
+    bn_train = L.BatchNorm(conv, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0)], 
                      use_global_stats=False, in_place=True, include=dict(phase=0))
-    bn_test = L.BatchNorm(conv, param=[dict(lr_mult=0), dict(lr_mult=0), dict(lr_mult=0)], 
+    bn_test = L.BatchNorm(conv, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0)], 
                      use_global_stats=False, in_place=True, include=dict(phase=1))
     scale = L.Scale(conv, scale_param=dict(bias_term=True), in_place=True)
     
@@ -163,9 +163,11 @@ Examples:
     N =  int(sys.argv[4])
 
     proto_created = str(make_resnet(training_data_path, test_data_path, mean_file_path, N))
+    proto_created = proto_created.replace('_test"', '"')
+    proto_created = proto_created.replace('_train"', '"')
     restnet_prototxt = proto_created.replace('test_', '')
 
-    save_file = './resnet_' + str(6 * N + 2) + '_created_by_generator.prototxt'
+    save_file = './resnet' + str(6 * N + 2) + '_relu_msra_created_by_generator.prototxt'
     with open(save_file, 'w') as f:
         f.write(restnet_prototxt)
 
