@@ -21,5 +21,5 @@ python resnet_generator.py training_data_path test_data_path mean_file_path N
 # Examples: 
 
 ```
-python resnet_generator.py ./training_data ./test_data 5
+python resnet_generator.py ./training_data ./test_data ./mean.binaryproto 5
 ```
