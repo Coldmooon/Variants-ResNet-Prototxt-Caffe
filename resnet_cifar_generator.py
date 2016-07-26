@@ -18,7 +18,7 @@ def conv_bn_scale_relu(bottom, kernel_size=3, num_out=64, stride=1, pad=0, param
     bn_train = L.BatchNorm(conv, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0)], 
                      use_global_stats=False, in_place=True, include=dict(phase=0))
     bn_test = L.BatchNorm(conv, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0)], 
-                     use_global_stats=False, in_place=True, include=dict(phase=1))
+                     use_global_stats=True, in_place=True, include=dict(phase=1))
     scale = L.Scale(conv, scale_param=dict(bias_term=True), in_place=True)
     relu = L.ReLU(conv, in_place=True)
     
@@ -33,7 +33,7 @@ def conv_bn_scale(bottom, kernel_size=3, num_out=64, stride=1, pad=0, params=con
     bn_train = L.BatchNorm(conv, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0)], 
                      use_global_stats=False, in_place=True, include=dict(phase=0))
     bn_test = L.BatchNorm(conv, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0)], 
-                     use_global_stats=False, in_place=True, include=dict(phase=1))
+                     use_global_stats=True, in_place=True, include=dict(phase=1))
     scale = L.Scale(conv, scale_param=dict(bias_term=True), in_place=True)
     
     return conv, bn_train, bn_test, scale
