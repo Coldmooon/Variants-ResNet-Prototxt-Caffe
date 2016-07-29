@@ -167,7 +167,7 @@ Examples:
     proto_created = proto_created.replace('_train"', '"')
     restnet_prototxt = proto_created.replace('test_', '')
 
-    save_file = './resnet' + str(6 * N + 2) + '_relu_msra_created_by_generator.prototxt'
+    save_file = './resnet' + str(6 * N + 2) + '_relu_msra_cifar10.prototxt'
     with open(save_file, 'w') as f:
         f.write(restnet_prototxt)
 
