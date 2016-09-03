@@ -1854,8 +1854,8 @@ layer {
   }
   convolution_param {
     num_output: 32
-    pad: 0
-    kernel_size: 1
+    pad: 1
+    kernel_size: 3
     stride: 2
     weight_filler {
       type: "msra"
@@ -3648,8 +3648,8 @@ layer {
   }
   convolution_param {
     num_output: 64
-    pad: 0
-    kernel_size: 1
+    pad: 1
+    kernel_size: 3
     stride: 2
     weight_filler {
       type: "msra"

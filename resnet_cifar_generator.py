@@ -53,7 +53,7 @@ def identity_residual(bottom, kernel_size=3, num_out=64, stride=1, pad=0):
     return conv1, bn1_train, bn1_test, scale1, relu1, conv2, bn2_train, bn2_test, scale2, eltsum, relu_after_sum
 
 def project_residual(bottom, kernel_size=3, num_out=64, stride=1, pad=0):
-    conv_proj, bn_proj_train, bn_proj_test, scale_proj = conv_bn_scale(bottom, kernel_size=1, num_out=num_out, stride=stride, pad=0)
+    conv_proj, bn_proj_train, bn_proj_test, scale_proj = conv_bn_scale(bottom, kernel_size=3, num_out=num_out, stride=stride, pad=1)
 
     conv1, bn1_train, bn1_test, scale1, relu1 = conv_bn_scale_relu(bottom, kernel_size=kernel_size, num_out=num_out, stride=stride, pad=pad)
     conv2, bn2_train, bn2_test, scale2 = conv_bn_scale(conv1, kernel_size=kernel_size, num_out=num_out, stride=1, pad=pad)
