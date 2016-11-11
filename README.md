@@ -1,6 +1,6 @@
 # ResNet-Prototxt-for-Caffe
 
-This script is used to creat ResNet prototxt on cifar10 for Caffe. Following the original paper, N = {3, 5, 7 , 9, 18} needs to be given, where
+This script is used to create ResNet (Deep residual networks https://arxiv.org/abs/1512.03385) prototxt on cifar10 (60000 32x32 colour images in 10 classes, with 6000 images per class https://www.cs.toronto.edu/~kriz/cifar.html)  for Caffe. Following the original paper, N = {3, 5, 7 , 9, 18} needs to be given, where
 - 3  for 20-layer network
 - 5  for 32-layer network
 - 7  for 44-layer network
