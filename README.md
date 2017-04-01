@@ -7,6 +7,8 @@ This script is used to create ResNet (Deep residual networks https://arxiv.org/a
 - 9  for 56-layer network
 - 18 for 110-layer network
 
+The generated prototxt file is completely consistent with [fb.resnet.torch/models/resnet.lua](https://github.com/facebook/fb.resnet.torch/blob/master/models/resnet.lua).
+
 # Usage:
 
 ```
