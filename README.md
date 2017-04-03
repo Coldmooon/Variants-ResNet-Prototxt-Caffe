@@ -2,7 +2,7 @@
 
 This script is used to create ResNet (Deep residual networks https://arxiv.org/abs/1512.03385) and Pre-Resnet ("Identity Mappings in Deep Residual Networks" (http://arxiv.org/abs/1603.05027).) prototxt on cifar10/100 (60000 32x32 colour images in 10/100 classes, https://www.cs.toronto.edu/~kriz/cifar.html) for Caffe. Following the original paper, the parameter N needs to be given.
 
-for ResNet, N = :
+for ResNet, N =
 
 - 3  for 20-layer network
 - 5  for 32-layer network
@@ -10,7 +10,7 @@ for ResNet, N = :
 - 9  for 56-layer network
 - 18 for 110-layer network
 
-, and for Pre-ResNet, N = :
+, and for Pre-ResNet, N =
 
 - 18  for 164-layer  network
 - 111 for 1001-layer network
@@ -23,12 +23,12 @@ for ResNet, N = :
 ```
 python (pre)resnet_cifar.py training-data-path test-data-path mean-file-path N
 ```
-, where
+where
 
-- training-data-path: the path of training data (LEVELDB or LMDB).
--     test-data-path: the path of test data (LEVELDB or LMDB).
--     mean-file-path: the path of mean file for training data.
--                  N: a parameter introduced by the original paper, meaning the number of repeat of residualn building block for each feature map size (32, 16, 8). For example, N = 5 means that creat 5 residual building blocks for feature map size 32, 5 for feature map size 16, and 5 for feature map size 8. Besides, in each building block, two weighted layers are included. So there are (5 + 5 + 5)*2 + 2 = 32 layers.
+- `training-data-path`: the path of training data (LEVELDB or LMDB)
+- `test-data-path`: the path of test data (LEVELDB or LMDB)
+- `mean-file-path`: the path of mean file for training data
+- `N`: a parameter introduced by the original paper, meaning the number of repeat of residualn building block for each feature map size (32, 16, 8). For example, N = 5 means that creat 5 residual building blocks for feature map size 32, 5 for feature map size 16, and 5 for feature map size 8. Besides, in each building block, two weighted layers are included. So there are (5 + 5 + 5)*2 + 2 = 32 layers.
 
 # Examples: 
 
