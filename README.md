@@ -1,20 +1,25 @@
 # ResNet-Prototxt-for-Caffe
 
-This script is used to create ResNet (Deep residual networks https://arxiv.org/abs/1512.03385) prototxt on cifar10 (60000 32x32 colour images in 10 classes, with 6000 images per class https://www.cs.toronto.edu/~kriz/cifar.html)  for Caffe. Following the original paper, N = {3, 5, 7 , 9, 18} needs to be given, where
+This script is used to create ResNet (Deep residual networks https://arxiv.org/abs/1512.03385) and Pre-Resnet ("Identity Mappings in Deep Residual Networks" (http://arxiv.org/abs/1603.05027).) prototxt on cifar10 (60000 32x32 colour images in 10 classes, with 6000 images per class https://www.cs.toronto.edu/~kriz/cifar.html) for Caffe. Following the original paper, the parameter N needs to be given.
+for ResNet, N = :
 - 3  for 20-layer network
 - 5  for 32-layer network
 - 7  for 44-layer network
 - 9  for 56-layer network
 - 18 for 110-layer network
+and for Pre-ResNet, N = :
+- 18  for 164-layer  network
+- 111 for 1001-layer network
 
-The generated prototxt file is completely consistent with [fb.resnet.torch/models/resnet.lua](https://github.com/facebook/fb.resnet.torch/blob/master/models/resnet.lua).
+`resnet_cifar.py` is completely consistent with [fb.resnet.torch/models/resnet.lua](https://github.com/facebook/fb.resnet.torch/blob/master/models/resnet.lua).
+`preresnet_cifar.py` is completely consistent with [KaimingHe/resnet-1k-layers](https://github.com/KaimingHe/resnet-1k-layers)
 
 # Usage:
 
 ```
-python resnet_generator.py training_data_path test_data_path mean_file_path N
+python (pre)resnet_generator.py training_data_path test_data_path mean_file_path N
 ```
-
+, where
 - training_data_path: the path of training data (LEVELDB or LMDB).
 -     test_data_path: the path of test data (LEVELDB or LMDB).
 -     mean_file_path: the path of mean file for training data.
@@ -23,8 +28,10 @@ python resnet_generator.py training_data_path test_data_path mean_file_path N
 # Examples: 
 
 ```
-python resnet_generator.py ./training_data ./test_data ./mean.binaryproto 5
+python resnet_cifar.py    ./training_data ./test_data ./mean.binaryproto 5
+python preresnet_cifar.py ./training_data ./test_data ./mean.binaryproto 111
 ```
+
 
 # Validation error rate
 
