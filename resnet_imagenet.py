@@ -74,7 +74,7 @@ def project_residual(bottom, kernel_size=3, num_out=64, stride=1, pad=0):
            conv2, bn2, scale2, relu2, \
            conv3, bn3, scale3, eltsum, relu_after_sum
     
-def make_resnet(training_data='cifar10_train', test_data='cifar10_test', mean_file='mean.binaryproto', depth=4):
+def make_resnet(training_data='train_data_path', test_data='test_data_path', mean_file='mean.binaryproto', depth=50):
     
     # num_feature_maps = np.array([16, 32, 64]) # feature map size: [32, 16, 8]
     configs = {
@@ -185,36 +185,29 @@ def make_resnet(training_data='cifar10_train', test_data='cifar10_test', mean_fi
 #--------------------------------------------------------------------------------------------------------#
 if __name__ == '__main__':
     show_usage = """
-This script is used to creat ResNet prototxt for Caffe. 
-Following the original paper, N = {3, 5, 7 ,9} needs to be given, where
-3  for 20-layer network
-5  for 32-layer network
-7  for 44-layer network
-9  for 56-layer network
-18 for 110-layer network
+This script is used to creat ResNet prototxt for ImageNet. 
+Following the original paper, depth = {50, 101, 152 ,200} needs to be given, where
 
-Usage: <option(s)> N
-python resnet_generator.py training_data_path test_data_path mean_file_path N
+Usage: depth <option(s)> 
+python resnet_generator.py depth training_data_path test_data_path mean_file_path
 Options:
-   training_data_path: the path of training data (LEVELDB or LMDB).
-       test_data_path: the path of test data (LEVELDB or LMDB).
-       mean_file_path: the path of mean file for training data.
-                    N: a parameter introduced by the original paper, meaning the number of repeat of residual
-                       building block for each feature map size (32, 16, 8).
-                       For example, N = 5 means that creat 5 residual building blocks for feature map size 32,
-                       5 for feature map size 16, and 5 for feature map size 8. Besides, in each building block,
-                       two weighted layers are included. So there are (5 + 5 + 5)*2 + 2 = 32 layers.
+    depth: 50, 101, 152, or 200.
+    training_data_path: the path of training data (LEVELDB or LMDB).
+    test_data_path: the path of test data (LEVELDB or LMDB).
+    mean_file_path: the path of mean file for training data.
+
 Examples: 
-    python resnet_generator.py ./training_data ./test_data 5
+    python resnet_imagenet.py 50 ./training_data ./test_data ./mean.binaryproto.
     """
 
     if len (sys.argv) > 5:
-        raise RuntimeError('Usage: ' + sys.argv[0] + 'training_data_path test_data_path mean_file_path N\n' + show_usage)
+        raise RuntimeError('Usage: ' + sys.argv[0] + 'depth training_data_path test_data_path mean_file_path \n' + show_usage)
 
-    training_data_path = str(sys.argv[1])
-    test_data_path = str(sys.argv[2])
-    mean_file_path = str(sys.argv[3])
-    depth =  int(sys.argv[4])
+    depth = int(sys.argv[1])
+    training_data_path = str(sys.argv[2])
+    test_data_path = str(sys.argv[3])
+    mean_file_path = str(sys.argv[4])
+
 
     proto_created = str(make_resnet(training_data_path, test_data_path, mean_file_path, depth))
     # We want to use training data as the input of conv1 during training, and test data
