@@ -90,26 +90,26 @@ def make_resnet(training_data='cifar10_train', test_data='cifar10_test', mean_fi
     n = caffe.NetSpec()
     # make training data layer
     n.data, n.label = L.Data(source=training_data, backend=P.Data.LMDB, batch_size=256, ntop=2,
-                                     transform_param=dict(crop_size=225, mean_file=mean_file, mirror=True),
+                                     transform_param=dict(crop_size=224, mean_file=mean_file, mirror=True),
                                      image_data_param=dict(shuffle=True), include=dict(phase=0))
     # make test data layer 
     n.test_data, n.test_label = L.Data(source=test_data, backend=P.Data.LMDB, batch_size=100, ntop=2,
-                                     transform_param=dict(crop_size=225, mean_file=mean_file, mirror=False),
+                                     transform_param=dict(crop_size=224, mean_file=mean_file, mirror=False),
                                      include=dict(phase=1))
     # conv1 should accept both training and test data layers. But this is inconvenient to code in pycaffe.
     # You have to write two conv layers for them. To deal with this, I temporarily ignore the test data layer
     # and let conv1 accept the output of training data layer. Then, after making the whole prototxt, I postprocess
     # the top name of the two data layers, renaming their names to the same.
 
-    n.conv1 = L.Convolution(n.data, kernel_size=7, stride=2, num_output=64,
+    n.conv = L.Convolution(n.data, kernel_size=7, stride=2, num_output=64,
                          pad=3, param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)],
                          weight_filler=weight_filler, bias_filler=bias_filler)
-    n.bn = L.BatchNorm(n.conv1, in_place=True)
+    n.bn = L.BatchNorm(n.conv, in_place=True)
     n.scale = L.Scale(n.bn, scale_param=dict(bias_term=True), in_place=True)
     n.relu = L.ReLU(n.scale, in_place=True)
 
 
-    n.max_pooling = L.Pooling(n.relu, pool=P.Pooling.MAX, kernel_size=3, stride=2, pad=1)
+    n.max_pooling = L.Pooling(n.relu, pool=P.Pooling.MAX, kernel_size=3, stride=2, pad=0)
     # set up a checkpoint so as to know where we get.
     checkpoint = 'n.max_pooling'
 
@@ -128,48 +128,48 @@ def make_resnet(training_data='cifar10_train', test_data='cifar10_test', mean_fi
             stride = 2
         for res in range(nblocks):
             # stage name
-            stage = 'map' + str(num_map) + '_' + str(res + 1) + '_'
+            stage = 'block' + str(res + 1) + '_stage' + str(i+1)
             # use the projecting block when downsample the feature map
             if res == 0:
                 # if np.where(num_feature_maps == num_map)[0] == 0:
-                make_res = 'n.' + stage + 'conv_proj,' + \
-                           'n.' + stage + 'bn_proj,' + \
-                           'n.' + stage + 'scale_proj,' + \
-                           'n.' + stage + 'conv_a,' + \
-                           'n.' + stage + 'bn_a, ' + \
-                           'n.' + stage + 'scale_a, ' + \
-                           'n.' + stage + 'relu_a, ' + \
-                           'n.' + stage + 'conv_b, ' + \
-                           'n.' + stage + 'bn_b, ' + \
-                           'n.' + stage + 'scale_b, ' + \
-                           'n.' + stage + 'relu_b, ' + \
-                           'n.' + stage + 'conv_c, ' + \
-                           'n.' + stage + 'bn_c, ' + \
-                           'n.' + stage + 'scale_c, ' + \
-                           'n.' + stage + 'eltsum, ' + \
-                           'n.' + stage + 'relu_after_sum' + \
+                make_res = 'n.' + 'conv_' + stage + '_proj,' + \
+                           'n.' + 'bn_' + stage + '_proj,' + \
+                           'n.' + 'scale_' + stage + '_proj,' + \
+                           'n.' + 'conv_' + stage + '_a,' + \
+                           'n.' + 'bn_' + stage + '_a, ' + \
+                           'n.' + 'scale_' + stage + '_a, ' + \
+                           'n.' + 'relu_' + stage + '_a, ' + \
+                           'n.' + 'conv_' + stage + '_b, ' + \
+                           'n.' + 'bn_' + stage + '_b, ' + \
+                           'n.' + 'scale_' + stage + '_b, ' + \
+                           'n.' + 'relu_' + stage + '_b, ' + \
+                           'n.' + 'conv_' + stage + '_c, ' + \
+                           'n.' + 'bn_' + stage + '_c, ' + \
+                           'n.' + 'scale_' + stage + '_c, ' + \
+                           'n.' + 'eltsum_' + stage + ', ' + \
+                           'n.' + 'relu_after_sum_' + stage + \
                            ' = project_residual(' + checkpoint + ', num_out=num_map, stride=' + str(stride) + ')'
                 exec(make_res)
-                checkpoint = 'n.' + stage + 'relu_after_sum' # where we get
+                checkpoint = 'n.' + 'relu_after_sum_' + stage # where we get
                 continue
 
             # most blocks have this shape
-            make_res = 'n.' + stage + 'conv_a, ' + \
-                       'n.' + stage + 'bn_a, ' + \
-                       'n.' + stage + 'scale_a, ' + \
-                       'n.' + stage + 'relu_a, ' + \
-                       'n.' + stage + 'conv_b, ' + \
-                       'n.' + stage + 'bn_b, ' + \
-                       'n.' + stage + 'scale_b, ' + \
-                       'n.' + stage + 'relu_b, ' + \
-                       'n.' + stage + 'conv_c, ' + \
-                       'n.' + stage + 'bn_c, ' + \
-                       'n.' + stage + 'scale_c, ' + \
-                       'n.' + stage + 'eltsum, ' + \
-                       'n.' + stage + 'relu_after_sum' + \
+            make_res = 'n.' + 'conv_' + stage + '_a, ' + \
+                       'n.' + 'bn_' + stage + '_a, ' + \
+                       'n.' + 'scale_' + stage + '_a, ' + \
+                       'n.' + 'relu_' + stage + '_a, ' + \
+                       'n.' + 'conv_' + stage + '_b, ' + \
+                       'n.' + 'bn_' + stage + '_b, ' + \
+                       'n.' + 'scale_' + stage + '_b, ' + \
+                       'n.' + 'relu_' + stage + '_b, ' + \
+                       'n.' + 'conv_' + stage + '_c, ' + \
+                       'n.' + 'bn_' + stage + '_c, ' + \
+                       'n.' + 'scale_' + stage + '_c, ' + \
+                       'n.' + 'eltsum_' + stage + ', ' + \
+                       'n.' + 'relu_after_sum_' + stage + \
                        ' = identity_residual(' + checkpoint + ', num_out=num_map, stride=1)'
             exec(make_res)
-            checkpoint = 'n.' + stage + 'relu_after_sum' # where we get
+            checkpoint = 'n.' + 'relu_after_sum_' + stage # where we get
             
     # add the pooling layer
     exec('n.pool_global = L.Pooling(' + checkpoint + ', pool=P.Pooling.AVE, global_pooling=True)')
