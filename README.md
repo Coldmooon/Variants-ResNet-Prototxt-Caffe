@@ -1,6 +1,8 @@
 # ResNet-Prototxt-for-Caffe
 
-This script is used to create ResNet (Deep residual networks https://arxiv.org/abs/1512.03385) and Pre-Resnet ("Identity Mappings in Deep Residual Networks" (http://arxiv.org/abs/1603.05027).) prototxt on cifar10/100 (60000 32x32 colour images in 10/100 classes, https://www.cs.toronto.edu/~kriz/cifar.html) for Caffe. Following the original paper, the parameter N needs to be given.
+This script is used to create ResNet (Deep residual networks https://arxiv.org/abs/1512.03385) and Pre-Resnet ("Identity Mappings in Deep Residual Networks" (http://arxiv.org/abs/1603.05027).) prototxt on ImageNet or cifar10/100 (60000 32x32 colour images in 10/100 classes, https://www.cs.toronto.edu/~kriz/cifar.html) for Caffe.
+
+#### CIFAR
 
 for ResNet, N =
 
@@ -15,13 +17,23 @@ for ResNet, N =
 - 18  for 164-layer  network
 - 111 for 1001-layer network
 
-`resnet_cifar.py` is completely consistent with [fb.resnet.torch/models/resnet.lua](https://github.com/facebook/fb.resnet.torch/blob/master/models/resnet.lua).
+#### ImageNet
+
+for ResNet, Pre-ResNet, SE-Net
+- depth = 50, 101, 152, or 200
+
+`resnet_cifar.py`, `resnet_imagenet.py`, `preresnet_imagenet.py`, and `senet_imagenet.py` are completely consistent with [fb.resnet.torch/models/resnet.lua](https://github.com/facebook/fb.resnet.torch/blob/master/models/resnet.lua).
+
 `preresnet_cifar.py` is completely consistent with [KaimingHe/resnet-1k-layers](https://github.com/KaimingHe/resnet-1k-layers)
+
 
 # Usage:
 
 ```
 python (pre)resnet_cifar.py training-data-path test-data-path mean-file-path N
+python senet_imagenet.py depth training-data-path test-data-path mean-file-path
+python resnet_imagenet.py depth training-data-path test-data-path mean-file-path
+python presnet_imagenet.py depth training-data-path test-data-path mean-file-path
 ```
 where
 
@@ -29,6 +41,7 @@ where
 - `test-data-path`: the path of test data (LEVELDB or LMDB)
 - `mean-file-path`: the path of mean file for training data
 - `N`: a parameter introduced by the original paper, meaning the number of repeat of residualn building block for each feature map size (32, 16, 8). For example, N = 5 means that creat 5 residual building blocks for feature map size 32, 5 for feature map size 16, and 5 for feature map size 8. Besides, in each building block, two weighted layers are included. So there are (5 + 5 + 5)*2 + 2 = 32 layers.
+- `depth` : the depth of network
 
 # Examples: 
 
