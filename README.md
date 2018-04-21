@@ -24,7 +24,7 @@ for ResNet, Pre-ResNet, SE-Net
 
 #### Note
 
-- `resnet_cifar.py`, `resnet_imagenet.py`, `preresnet_imagenet.py`, and `senet_imagenet.py` are completely consistent with [fb.resnet.torch/models/resnet.lua](https://github.com/facebook/fb.resnet.torch/blob/master/models/resnet.lua).
+- `resnet_cifar.py`, `resnet_imagenet.py`, `preresnet_imagenet.py`, and `senet_imagenet.py` are completely consistent with [fb.resnet.torch/models/*.lua](https://github.com/facebook/fb.resnet.torch/blob/master/models/resnet.lua).
 
 - `preresnet_cifar.py` is completely consistent with [KaimingHe/resnet-1k-layers](https://github.com/KaimingHe/resnet-1k-layers)
 
