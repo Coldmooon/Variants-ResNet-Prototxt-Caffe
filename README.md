@@ -22,9 +22,11 @@ for ResNet, N =
 for ResNet, Pre-ResNet, SE-Net
 - depth = 50, 101, 152, or 200
 
-`resnet_cifar.py`, `resnet_imagenet.py`, `preresnet_imagenet.py`, and `senet_imagenet.py` are completely consistent with [fb.resnet.torch/models/resnet.lua](https://github.com/facebook/fb.resnet.torch/blob/master/models/resnet.lua).
+#### Note
 
-`preresnet_cifar.py` is completely consistent with [KaimingHe/resnet-1k-layers](https://github.com/KaimingHe/resnet-1k-layers)
+- `resnet_cifar.py`, `resnet_imagenet.py`, `preresnet_imagenet.py`, and `senet_imagenet.py` are completely consistent with [fb.resnet.torch/models/resnet.lua](https://github.com/facebook/fb.resnet.torch/blob/master/models/resnet.lua).
+
+- `preresnet_cifar.py` is completely consistent with [KaimingHe/resnet-1k-layers](https://github.com/KaimingHe/resnet-1k-layers)
 
 
 # Usage:
