@@ -19,7 +19,7 @@ def conv_bn_scale_relu(bottom, kernel_size=3, num_out=64, stride=1, pad=0, param
                          pad=pad, param=[dict(lr_mult=1, decay_mult=1)],
                          weight_filler=weight_filler)
     bn = L.BatchNorm(conv, in_place=True)
-    scale = L.Scale(conv, scale_param=dict(bias_term=True), in_place=True)
+    scale = L.Scale(conv, scale_param=dict(bias_term=True), in_place=True, param=[dict(lr_mult=1, decay_mult=0), dict(lr_mult=1, decay_mult=0)])
     relu = L.ReLU(conv, in_place=True)
     
     return conv, bn, scale, relu
@@ -32,7 +32,7 @@ def conv_bn_scale(bottom, kernel_size=3, num_out=64, stride=1, pad=0, params=con
                          pad=pad, param=[dict(lr_mult=1, decay_mult=1)],
                          weight_filler=weight_filler)
     bn = L.BatchNorm(conv, in_place=True)
-    scale = L.Scale(conv, scale_param=dict(bias_term=True), in_place=True)
+    scale = L.Scale(conv, scale_param=dict(bias_term=True), in_place=True, param=[dict(lr_mult=1, decay_mult=0), dict(lr_mult=1, decay_mult=0)])
     
     return conv, bn, scale
 
