@@ -15,16 +15,16 @@ conv_params = [weight_filler, bias_filler]
 def conv_bn_scale_relu(bottom, kernel_size=3, num_out=64, stride=1, pad=0, params=conv_params):
     weight_filler = params[0]
     bias_filler = params[1]
-    conv = L.Convolution(bottom, kernel_size=kernel_size, stride=stride, num_output=num_out,
-                         pad=pad, param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)],
-                         weight_filler=weight_filler, bias_filler=bias_filler)
+    conv = L.Convolution(bottom, kernel_size=kernel_size, stride=stride, num_output=num_out, bias_term=False,
+                         pad=pad, param=[dict(lr_mult=1, decay_mult=1)],
+                         weight_filler=weight_filler)
     bn_train = L.BatchNorm(conv, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0),
                                         dict(lr_mult=0, decay_mult=0)],
                            use_global_stats=False, in_place=True, include=dict(phase=0))
     bn_test = L.BatchNorm(conv, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0),
                                        dict(lr_mult=0, decay_mult=0)],
                           use_global_stats=True, in_place=True, include=dict(phase=1))
-    scale = L.Scale(conv, scale_param=dict(bias_term=True), in_place=True)
+    scale = L.Scale(conv, scale_param=dict(bias_term=True), in_place=True, param=[dict(lr_mult=1, decay_mult=0), dict(lr_mult=1, decay_mult=0)])
     relu = L.ReLU(conv, in_place=True)
 
     return conv, bn_train, bn_test, scale, relu
@@ -36,7 +36,7 @@ def preact(bottom):
     bn_test = L.BatchNorm(bottom, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0),
                                        dict(lr_mult=0, decay_mult=0)],
                           use_global_stats=True, in_place=False, include=dict(phase=1))
-    scale = L.Scale(bn_train, scale_param=dict(bias_term=True), in_place=True)
+    scale = L.Scale(bn_train, scale_param=dict(bias_term=True), in_place=True, param=[dict(lr_mult=1, decay_mult=0), dict(lr_mult=1, decay_mult=0)])
     relu = L.ReLU(bn_train, in_place=True)
     return bn_train, bn_test, scale, relu
 
@@ -69,18 +69,18 @@ def project_block(bottom, kernel_size=3, base_channels=64, stride=1, pad=0):
 
     bn_pre_train, bn_pre_test, pre_scale, pre_relu = preact(bottom)
 
-    conv_proj = L.Convolution(pre_relu, kernel_size=1, stride=stride, num_output=num_out, pad=0,
-                              param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)],
-                         weight_filler=weight_filler, bias_filler=bias_filler)
+    conv_proj = L.Convolution(pre_relu, kernel_size=1, stride=stride, num_output=num_out, pad=0, bias_term=False,
+                              param=[dict(lr_mult=1, decay_mult=1)],
+                         weight_filler=weight_filler)
 
     # branch 2
     conv1, bn1_train, bn1_test, scale1, relu1 = conv_bn_scale_relu(pre_relu, kernel_size=1, num_out=base_channels,
                                                                    stride=stride, pad=0)
     conv2, bn2_train, bn2_test, scale2, relu2 = conv_bn_scale_relu(relu1, kernel_size=3, num_out=base_channels, stride=1,
                                                        pad=1)
-    conv_end = L.Convolution(relu2, kernel_size=1, stride=1, num_output=num_out, pad=0,
-                             param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)],
-                         weight_filler=weight_filler, bias_filler=bias_filler)
+    conv_end = L.Convolution(relu2, kernel_size=1, stride=1, num_output=num_out, pad=0, bias_term=False,
+                             param=[dict(lr_mult=1, decay_mult=1)],
+                         weight_filler=weight_filler)
 
     eltsum = L.Eltwise(conv_proj, conv_end, eltwise_param=dict(operation=1))
 

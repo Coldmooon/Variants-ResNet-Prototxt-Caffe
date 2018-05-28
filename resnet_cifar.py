@@ -15,14 +15,14 @@ conv_params = [weight_filler, bias_filler]
 def conv_bn_scale_relu(bottom, kernel_size=3, num_out=64, stride=1, pad=0, params=conv_params):
     weight_filler = params[0]
     bias_filler = params[1]
-    conv = L.Convolution(bottom, kernel_size=kernel_size, stride=stride, num_output=num_out,
-                         pad=pad, param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)], 
-                         weight_filler=weight_filler, bias_filler=bias_filler)
+    conv = L.Convolution(bottom, kernel_size=kernel_size, stride=stride, num_output=num_out, bias_term=False,
+                         pad=pad, param=[dict(lr_mult=1, decay_mult=1)],
+                         weight_filler=weight_filler)
     bn_train = L.BatchNorm(conv, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0)], 
                      use_global_stats=False, in_place=True, include=dict(phase=0))
     bn_test = L.BatchNorm(conv, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0)], 
                      use_global_stats=True, in_place=True, include=dict(phase=1))
-    scale = L.Scale(conv, scale_param=dict(bias_term=True), in_place=True)
+    scale = L.Scale(conv, scale_param=dict(bias_term=True), in_place=True, param=[dict(lr_mult=1, decay_mult=0), dict(lr_mult=1, decay_mult=0)])
     relu = L.ReLU(conv, in_place=True)
     
     return conv, bn_train, bn_test, scale, relu
@@ -31,14 +31,14 @@ def conv_bn_scale_relu(bottom, kernel_size=3, num_out=64, stride=1, pad=0, param
 def conv_bn_scale(bottom, kernel_size=3, num_out=64, stride=1, pad=0, params=conv_params):
     weight_filler = params[0]
     bias_filler = params[1]
-    conv = L.Convolution(bottom, kernel_size=kernel_size, stride=stride, num_output=num_out,
-                         pad=pad, param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)], 
-                         weight_filler=weight_filler, bias_filler=bias_filler)
+    conv = L.Convolution(bottom, kernel_size=kernel_size, stride=stride, num_output=num_out, bias_term=False,
+                         pad=pad, param=[dict(lr_mult=1, decay_mult=1)],
+                         weight_filler=weight_filler)
     bn_train = L.BatchNorm(conv, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0)], 
                      use_global_stats=False, in_place=True, include=dict(phase=0))
     bn_test = L.BatchNorm(conv, param=[dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0)], 
                      use_global_stats=True, in_place=True, include=dict(phase=1))
-    scale = L.Scale(conv, scale_param=dict(bias_term=True), in_place=True)
+    scale = L.Scale(conv, scale_param=dict(bias_term=True), in_place=True, param=[dict(lr_mult=1, decay_mult=0), dict(lr_mult=1, decay_mult=0)])
     
     return conv, bn_train, bn_test, scale
 
